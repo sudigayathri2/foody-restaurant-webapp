@@ -26,13 +26,11 @@ public class FoodItemService {
         return repository.findAll();
     }
 
-    void updateFoodItem(FoodItem foodItem) throws InvalidIdException {
-        try {
-            FoodItem item = getFoodItemById(foodItem.getId());
-            repository.save(foodItem);
-        } catch (InvalidIdException e) {
-            throw e;
-        }
+    public FoodItem updateFoodItem(FoodItem foodItem) throws InvalidIdException {
+        FoodItem item = getFoodItemById(foodItem.getId());
+        foodItem.setUpdateDate(LocalDate.now());
+        repository.save(foodItem);
+        return foodItem;
     }
 
     public FoodItem getFoodItemById(UUID id) throws InvalidIdException {
