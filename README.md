@@ -10,59 +10,82 @@ Boot** for the backend and **Angular** for the frontend.
 - Enable URL & Method level security.
 - Define custom **UserDetailsService** that uses data jpa to fetch user details from db.
 
-## 🛠 Tech Stack
+# 🛠 How to set up spring security
 
-### Backend:
+## ✅ Requirements
 
-- **Spring Boot** (REST APIs)
-- **Spring Security** (Authentication & Authorization)
-- **Hibernate & JPA** (Database ORM)
-- **MySQL/PostgreSQL** (Database)
-- **Actuator** (Monitoring Solution)
+- Java 17+ (or Java 11+ with proper dependencies)
+- Spring Boot 3.x
+- Gradle or Maven
+- Spring Security
 
-### Frontend:
+---
 
-- **Angular** (Component-based UI)
-- **Angular Material** (UI Design)
-- **RxJS** (State Management)
-- **Bootstrap** (Styling)
+### 1. Add Dependencies
 
-## 🚀 Getting Started
+**Maven:**
 
-### Backend Setup
+```xml
+<dependencies>
+    <!-- Spring Boot Starter Security -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+</dependencies>
+```
 
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/Code-N-Code/foody-restaurant-webapp.git
-   ```
-2. Navigate to the backend directory:
-   ```sh
-   cd backend
-   ```
-3. Configure the database in `application.properties`
-4. Run the Spring Boot application:
-   ```sh
-   mvn spring-boot:run
-   ```
+**Gradle:**
 
-### Frontend Setup
+```groovy
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+}
+```
 
-1. Navigate to the frontend directory:
-   ```sh
-   cd frontend
-   ```
-2. Install dependencies:
-   ```sh
-   npm install
-   ```
-3. Start the Angular application:
-   ```sh
-   ng serve
-   ```
+---
 
-## 📌 API Documentation
+### 2. Create the `SecurityConfig` Class
 
-Swagger documentation is available at: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+```java
+package com.example.demo.config;
+
+import com.example.demo.filter.CustomAuthFilter;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    @Autowired
+    UserDetailsServiceImpl userDetailsService; // Custom implementation of UserDetailsService.
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+       return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/public/**").permitAll()
+                .anyRequest().authenticated()
+            )
+                .userDetailsService(userDetailsService) // Setting custom userDetailsService.
+                .httpBasic(Customizer.withDefaults()); // Enabling basic auth.
+
+        return http.build();
+    }
+}
+```
+
+---
 
 ## 🔗 Course Details
 
