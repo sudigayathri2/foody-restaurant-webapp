@@ -3,13 +3,12 @@
 A full-stack restaurant web application where you can order food from the comfort of your home, built with **Java Spring
 Boot** for the backend and **Angular** for the frontend.
 
-## 📌 Features
+## In this lecture
 
-- 🍕 Menu browsing with categories
-- 🛒 Add to cart & checkout
-- 👤 User authentication & roles (Admin, Customer)
-- 📦 Order tracking & status updates
-- 📊 Admin dashboard for managing orders & menu
+- Setup Security in Spring Project.
+- Create **Roles** Entity to store user roles.
+- Enable URL & Method level security.
+- Define custom **UserDetailsService** that uses data jpa to fetch user details from db.
 
 ## 🛠 Tech Stack
 
