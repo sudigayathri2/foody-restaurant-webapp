@@ -1,13 +1,18 @@
 package com.codencode.foody.service;
 
+import com.codencode.foody.entity.Role;
 import com.codencode.foody.entity.User;
 import com.codencode.foody.exception.InvalidIdException;
 import com.codencode.foody.exception.InvalidOperationException;
+import com.codencode.foody.repository.RoleRepository;
 import com.codencode.foody.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,8 +23,27 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public UUID saveUser(User user) {
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
+    public UUID saveUser(User user) throws InvalidOperationException {
         user.setCreated(LocalDateTime.now());
+        List<Role> roles = new ArrayList<>();
+
+        for (Role role: user.getRoles()) {
+            Optional<Role> fetchedRole = roleRepository.findByRole(role.getRole());
+            if (fetchedRole.isPresent()) {
+                roles.add(fetchedRole.get());
+            } else {
+                throw new InvalidOperationException("Role " + role.getRole() + " not found.");
+            }
+        }
+        user.setRoles(roles);
+        // encode the password
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         User savedUser = userRepository.save(user);
         return savedUser.getId();
     }

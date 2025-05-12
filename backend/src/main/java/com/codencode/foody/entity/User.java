@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity(name = "users")
@@ -23,6 +24,17 @@ public class User {
     @Email(message = "Please provide a valid email.")
     @Column(unique = true)
     String email;
+
+    @NotBlank(message = "Password can not be empty.")
+    String password;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
+    )
+    List<Role> roles;
 
     LocalDateTime created;
     LocalDateTime modified;
@@ -69,5 +81,21 @@ public class User {
 
     public void setModified(LocalDateTime modified) {
         this.modified = modified;
+    }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

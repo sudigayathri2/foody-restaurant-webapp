@@ -21,7 +21,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/sign-up")
-    ResponseEntity<UUID> signUp(@Valid @RequestBody User user) {
+    ResponseEntity<UUID> signUp(@Valid @RequestBody User user) throws InvalidOperationException {
         UUID id = userService.saveUser(user);
         return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
