@@ -28,6 +28,9 @@ public class User {
     @NotBlank(message = "Password can not be empty.")
     String password;
 
+    @OneToMany(mappedBy = "user")
+    List<Order> orders;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
@@ -97,5 +100,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
     }
 }
