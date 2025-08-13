@@ -1,15 +1,15 @@
 package com.codencode.foody.service;
 
-import com.codencode.foody.entity.CartItem;
-import com.codencode.foody.entity.FoodItem;
-import com.codencode.foody.entity.User;
+import com.codencode.foody.entity.*;
 import com.codencode.foody.exception.InvalidIdException;
 import com.codencode.foody.exception.InvalidOperationException;
 import com.codencode.foody.repository.CartRepository;
 import com.codencode.foody.repository.FoodItemRepository;
 import com.codencode.foody.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,11 +18,13 @@ public class CartService {
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
     private final FoodItemRepository foodItemRepository;
+    private final OrderService orderService;
 
-    public CartService(CartRepository cartRepository, UserRepository userRepository, FoodItemRepository foodItemRepository) {
+    public CartService(CartRepository cartRepository, UserRepository userRepository, FoodItemRepository foodItemRepository, OrderService orderService) {
         this.cartRepository = cartRepository;
         this.userRepository = userRepository;
         this.foodItemRepository = foodItemRepository;
+        this.orderService = orderService;
     }
 
     public CartItem addCart(CartItem cartItem) throws InvalidIdException {
@@ -53,6 +55,40 @@ public class CartService {
 
         item.setQuantity(cartItem.getQuantity());
         return cartRepository.save(item);
+    }
+
+    @Transactional
+    public Order checkout(UUID userId) throws InvalidOperationException, InvalidIdException {
+        User user = userRepository.findById(userId).orElseThrow(
+                ()-> new InvalidIdException("User not found with id: " + userId)
+        );
+        List<CartItem> cartItems = fetchUserCartItems(userId);
+
+        if(cartItems.isEmpty()) {
+            throw new InvalidOperationException("User doesn't have items in their cart.");
+        }
+
+        Order order = new Order();
+        List<OrderItem> orderItems = new ArrayList<>();
+        order.setUser(user);
+
+        for (CartItem cartItem : cartItems) {
+            OrderItem item = new OrderItem();
+            item.setName(cartItem.getItemName());
+            item.setPrice(cartItem.getPrice());
+            item.setQuantity(cartItem.getQuantity());
+
+            FoodItem foodItem = new FoodItem();
+            foodItem.setId(cartItem.getItemId());
+            item.setFoodItem(foodItem);
+
+            orderItems.add(item);
+        }
+
+        order.setOrderItems(orderItems);
+        Order placedOrder = orderService.placeOrder(order);
+        cartRepository.deleteByUserId(userId);
+        return placedOrder;
     }
 
     public List<CartItem> fetchUserCartItems(UUID userId) {

@@ -1,6 +1,7 @@
 package com.codencode.foody.controller;
 
 import com.codencode.foody.entity.CartItem;
+import com.codencode.foody.entity.Order;
 import com.codencode.foody.exception.InvalidIdException;
 import com.codencode.foody.exception.InvalidOperationException;
 import com.codencode.foody.service.CartService;
@@ -39,5 +40,10 @@ public class CartController {
     @PostMapping("/update")
     public ResponseEntity<CartItem> updateCartItem(@RequestBody @Valid CartItem cartItem) throws InvalidIdException, InvalidOperationException {
         return ResponseEntity.status(HttpStatus.OK).body(cartService.updateCartItem(cartItem));
+    }
+
+    @PostMapping("/checkout/{userId}")
+    public ResponseEntity<Order> checkout(@PathVariable UUID userId) throws InvalidOperationException, InvalidIdException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(cartService.checkout(userId));
     }
 }
