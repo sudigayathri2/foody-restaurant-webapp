@@ -1,8 +1,7 @@
-### Foody – Restaurant Web Application (Backend)
+### MealConnect – Restaurant Web Application (Backend)
 
-Foody is a **backend-only restaurant web application** developed using **Java Spring Boot**.  
-This project was developed as a learning-focused individual project to understand real-world backend architecture, authentication, and role-based access control.
----
+MealConnect is a backend-only restaurant web application developed using **Java Spring Boot**. This project was developed as a learning-focused individual project to understand real-world backend architecture, authentication, and role-based access control.
+
 ### Features
 - User authentication and authorization
 - Role-based access control (USER / ADMIN)
@@ -10,7 +9,7 @@ This project was developed as a learning-focused individual project to understan
 - Custom `UserDetailsService` with Spring Data JPA
 - Password encryption using BCrypt
 - Clean and modular backend architecture
----
+  
 ### 🛠 Tech Stack
 
 - Java 17
@@ -20,7 +19,7 @@ This project was developed as a learning-focused individual project to understan
 - Maven
 - MySQL
 
----
+
 ### Security Implementation
 
 Spring Security is used to secure the application.
