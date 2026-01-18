@@ -1,4 +1,4 @@
-# Foody – Restaurant Web Application (Backend)
+### Foody – Restaurant Web Application (Backend)
 
 Foody is a **backend-only restaurant web application** developed using **Java Spring Boot**.  
 This project was developed as a learning-focused individual project to understand real-world backend architecture, authentication, and role-based access control.
